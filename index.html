@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>¡DRACONIAN! // EXPEDIENTE DE TERROR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Anton&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+  <canvas id="scene"></canvas>
+  <div id="vignette"></div>
+  <div id="halftone-overlay"></div>
+  <div id="speedlines"></div>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-glyph">
+        <svg viewBox="0 0 200 200" class="burst-svg">
+          <polygon points="100,0 122,62 185,45 148,98 200,130 135,138 148,200 100,155 52,200 65,138 0,130 52,98 15,45 78,62" />
+        </svg>
+        <div class="loader-eye"></div>
+      </div>
+      <div class="loader-title">¡DRACONIAN<span>!</span></div>
+      <div class="loader-bar"><div id="loader-fill"></div></div>
+      <div class="loader-status" id="loader-status">CARGANDO LA BESTIA... 0%</div>
+    </div>
+  </div>
+
+  <!-- TOP HUD -->
+  <header id="hud-top">
+    <div class="brand">
+      <span class="brand-mark">🐉</span>
+      <div class="brand-text">
+        <h1>¡DRACONIAN!</h1>
+        <p>EXPEDIENTE DE TERROR · EDICIÓN ESPECIAL</p>
+      </div>
+    </div>
+    <div class="status-cluster">
+      <div class="status-chip"><span class="dot"></span>¡EN VIVO!</div>
+      <div class="status-chip" id="clock">00:00:00</div>
+    </div>
+  </header>
+
+  <!-- LEFT LORE PANEL -->
+  <aside id="panel-lore" class="panel collapsed">
+    <div class="panel-head">
+      <h2>¡EXPEDIENTE!</h2>
+      <button id="lore-toggle" class="icon-btn" aria-label="Expandir panel" tabindex="-1">+</button>
+    </div>
+    <nav id="lore-tabs">
+      <button class="tab active" data-tab="origen">ORIGEN</button>
+      <button class="tab" data-tab="mitos">MITOS</button>
+      <button class="tab" data-tab="teoria">TEORÍA</button>
+      <button class="tab" data-tab="cultura">CÓMIC</button>
+    </nav>
+    <div id="lore-body" class="panel-body">
+      <!-- injected by JS -->
+    </div>
+  </aside>
+
+  <!-- RIGHT SPEC PANEL -->
+  <aside id="panel-spec" class="panel collapsed">
+    <div class="panel-head">
+      <h2>ESPÉCIMEN</h2>
+      <button id="spec-toggle" class="icon-btn" aria-label="Expandir panel" tabindex="-1">+</button>
+    </div>
+    <div class="panel-body">
+      <div class="spec-row"><span>DESIGNACIÓN</span><b>MESHY-CD/0826</b></div>
+      <div class="spec-row"><span>CLASE</span><b>DRACONIANO</b></div>
+      <div class="spec-row"><span>ORIGEN</span><b>CONSTELACIÓN DRACO (ATRIB.)</b></div>
+      <div class="spec-row"><span>AMENAZA</span><b class="threat">¡ALTA!</b></div>
+      <div class="meter">
+        <span>INTEGRIDAD NEURAL</span>
+        <div class="meter-track"><div class="meter-fill" style="--val:92%"></div></div>
+      </div>
+      <div class="meter">
+        <span>CAMUFLAJE BIOMÉTRICO</span>
+        <div class="meter-track"><div class="meter-fill" style="--val:77%"></div></div>
+      </div>
+      <div class="meter">
+        <span>ENERGÍA DE NÚCLEO</span>
+        <div class="meter-track"><div class="meter-fill" style="--val:64%"></div></div>
+      </div>
+      <div class="scan-readout" id="readout">
+        <div>X <span id="rx">0.000</span></div>
+        <div>Y <span id="ry">0.000</span></div>
+        <div>Z <span id="rz">0.000</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- BOTTOM CONTROL DOCK -->
+  <footer id="dock">
+    <button class="dock-btn active" id="btn-rotate" title="Auto-rotación">
+      <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
+      <span>ROTAR</span>
+    </button>
+    <button class="dock-btn" id="btn-wire" title="Malla de escaneo">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h4v4H7V7zm6 0h4v4h-4V7zM7 13h4v4H7v-4zm6 0h4v4h-4v-4z"/></svg>
+      <span>MALLA</span>
+    </button>
+    <button class="dock-btn active" id="btn-bloom" title="Brillo de tinta">
+      <svg viewBox="0 0 24 24"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4L12 2z"/></svg>
+      <span>BRILLO</span>
+    </button>
+    <button class="dock-btn" id="btn-light" title="Ciclo de color">
+      <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2zM9 21h6v1H9z"/></svg>
+      <span>LUZ</span>
+    </button>
+    <div class="dock-sep"></div>
+    <button class="dock-btn" id="btn-reset" title="Restablecer cámara">
+      <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+      <span>RESET</span>
+    </button>
+    <div class="dock-sep"></div>
+    <button class="dock-btn" id="btn-hand" title="Control por cámara (mano)">
+      <svg viewBox="0 0 24 24"><path d="M9 2a1 1 0 0 1 1 1v8h1V2a1 1 0 1 1 2 0v9h1V3a1 1 0 1 1 2 0v9.5h1V6a1 1 0 1 1 2 0v9c0 3.87-3.13 7-7 7s-7-3.13-7-7v-2.5c0-1 .5-2 1.5-2.5L9 9V3a1 1 0 0 1 0-1z"/></svg>
+      <span>MANO</span>
+    </button>
+  </footer>
+
+  <!-- HAND-TRACKING PREVIEW -->
+  <div id="hand-panel">
+    <div class="hand-panel-head">
+      <span>📷 CONTROL POR MANO</span>
+    </div>
+    <div class="hand-video-wrap">
+      <video id="hand-video" autoplay playsinline muted></video>
+      <canvas id="hand-canvas" width="240" height="180"></canvas>
+    </div>
+    <div id="hand-status">SIN MANO DETECTADA</div>
+    <div class="hand-legend">
+      🖐️ MUEVE LA MANO → GIRA LA VISTA · ACERCA/ALEJA LA MANO → ZOOM<br>
+      👍 CABEZA · ☝️ BRAZO DER. · 🖕 BRAZO IZQ. · 💍 PIERNA DER. · 🤙 PIERNA IZQ.
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
