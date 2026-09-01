@@ -7,7 +7,7 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { handControl } from "./handcontrol.js";
 
-const MODEL_URL = "/models/draconian_rigged.glb";
+const MODEL_URL = "models/draconian_rigged.glb";
 
 /* ---------------- lore content ---------------- */
 const LORE = {
@@ -187,12 +187,12 @@ manager.onError = (url) => {
 
 /* ---------------- comic panel wall ---------------- */
 const COMIC_FILES = [
-  "/comics/panel-01-cover.jpg",
-  "/comics/panel-02-attack.jpg",
-  "/comics/panel-03-disguise.jpg",
-  "/comics/panel-04-duel.jpg",
-  "/comics/panel-05-warrior.jpg",
-  "/comics/panel-06-icedragon.jpg",
+  "comics/panel-01-cover.jpg",
+  "comics/panel-02-attack.jpg",
+  "comics/panel-03-disguise.jpg",
+  "comics/panel-04-duel.jpg",
+  "comics/panel-05-warrior.jpg",
+  "comics/panel-06-icedragon.jpg",
 ];
 const MAT_COLORS = [0xffcf27, 0xe0202c];
 const WALL_RADIUS = 16;
