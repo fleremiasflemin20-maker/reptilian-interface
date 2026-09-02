@@ -15,7 +15,7 @@
 <br/>
 
 <p align="center">
-  <img src="./preview.jpg" width="90%" alt="Vista previa de ¡DRACONIAN!" />
+  <img src="https://github.com/user-attachments/assets/a9987262-105d-4a8c-bf72-4f64ea89f5fd" width="90%" alt="Vista previa de ¡DRACONIAN!" />
 </p>
 
 ## Sobre el proyecto
